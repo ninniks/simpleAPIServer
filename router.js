@@ -7,10 +7,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require('./middleware/auth');
 
-router.use('/user',[authMiddleware], userController);
+router.use('/api/user',[authMiddleware], userController);
 
 
-router.post('/login', [
+router.post('/api/login', [
     body('username').not().isEmpty().withMessage("username field is required.")
         .trim(),
     body('password').not().isEmpty().withMessage("password field is required")
