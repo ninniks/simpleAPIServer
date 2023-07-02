@@ -7,9 +7,9 @@ const bcrypt = require('bcrypt');
 
 userController.get('/',(req ,res) => {
     User.findAll().then((users) => {
-        res.json(users);
+        return res.json(users).end();
     }).catch((error) => {
-        res.status(500).json(error);
+        return res.status(500).json(error);
     })
 });
 
@@ -26,7 +26,7 @@ userController.post('/', [
     const errors = validationResult(req);
 
     if(!errors.isEmpty()){
-        res.status(422).json(errors);
+        return res.status(422).json(errors).end();
     }
     const firstName = req.body.first_name;
     const lastName = req.body.last_name;
@@ -42,13 +42,13 @@ userController.post('/', [
             email: email,
             password: hashedPassword
         }).then((user) => {
-            res.status(201).json(user);
+            return res.status(201).json(user).end();
         }).catch((err) => {
-            res.status(500).json(err);
+            return res.status(500).json(err).end();
         })
     }).catch((err) => {
         console.log(err);
-        res.status(500).json(err);
+        return res.status(500).json(err).end();
     });
 });
 

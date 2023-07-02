@@ -6,22 +6,20 @@ const authMiddleware = express();
 authMiddleware.use((req, res, next) => {
     const header = req.headers['authorization'];
 
-    if(typeof header !== 'undefined') {
+    if (typeof header !== 'undefined') {
         const bearer = header.split(' ');
         const token = bearer[1];
-        jwt.verify(token, process.env.JWT_KEY_SECRET, (err, decoded) => {
-            if(err){
-                res.status(403).json(err);
-            }
-
-            if(!decoded){
-                res.status(403).json("Your token has been expired or is not valid.");
-            }
-            req.user = decoded;
-        });
-        next();
+        try {
+            let decoded = jwt.verify(token, process.env.JWT_KEY_SECRET);
+            !decoded ?
+                res.status(403).json({error: "Your token has been expired or is not valid."}) :
+                req.user = decoded;
+            next();
+        } catch (err) {
+            return res.status(403).json({error: err.message});
+        }
     } else {
-        res.status(403)
+        return res.status(403).send({error: "No auth header specified"}).end();
     }
 });
 

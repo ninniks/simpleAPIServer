@@ -18,7 +18,7 @@ router.post('/api/login', [
     const errors = validationResult(req);
 
     if(!errors.isEmpty()){
-        res.status(422).json(errors);
+        return res.status(422).json(errors).end();
     }
 
     const username = req.body.username;
@@ -26,18 +26,18 @@ router.post('/api/login', [
 
     User.findOne({where: {username: username}}).then((user) =>{
         if(!user){
-            res.status(404).json({res: "User not found"})
+            return res.status(404).json({res: "User not found"}).end()
         }
 
         bcrypt.compare(password, user.password).then((correct) => {
             if(correct){
                 const token = jwt.sign({username: user.username, email: user.email},
                     process.env.JWT_KEY_SECRET, {expiresIn: "2m"});
-                res.status(200).json({accessToken: token});
+                return res.status(200).json({accessToken: token}).end();
             }
-            res.status(401).json("Unauthorized");
+            return res.status(401).json("Unauthorized").end();
         }).catch((err) => {
-            res.status(500).json(err);
+            return res.status(500).json(err).end();
         });
     });
 });
